@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Cocina de Doña Julia | Menú & Catering en Guaymallén</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #12100E; color: #F9F6F0; }
+        h1, h2, h3, .font-playfair { font-family: 'Playfair Display', serif; }
+        .wood-bg { background: linear-gradient(135deg, #2C1A11 0%, #1A0F0A 100%); }
+        
+        /* Animación saludo en reposo */
+        @keyframes wave-hand {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-25deg); }
+            75% { transform: rotate(20deg); }
+        }
+        .animate-wave { transform-origin: 75% 75%; animation: wave-hand 1.2s infinite ease-in-out; }
+
+        /* Caminata graciosita */
+        @keyframes waddle {
+            0%, 100% { transform: translateY(0) rotate(-4deg); }
+            50% { transform: translateY(-7px) rotate(4deg); }
+        }
+        .animate-waddle { animation: waddle 0.35s infinite ease-in-out; }
+
+        /* Mano sobando la pancita en círculos */
+        @keyframes rub-belly {
+            0% { transform: translate(0px, 0px); }
+            25% { transform: translate(5px, -4px); }
+            50% { transform: translate(0px, -8px); }
+            75% { transform: translate(-5px, -4px); }
+            100% { transform: translate(0px, 0px); }
+        }
+        .animate-rub { animation: rub-belly 0.6s infinite linear; }
+    </style>
+</head>
+<body class="min-h-screen pb-36 overflow-x-hidden">
+
+    <!-- ENCABEZADO -->
+    <header class="wood-bg border-b border-[#D4AF37]/40 sticky top-0 z-50 shadow-xl">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-[#D4AF37] shadow-lg bg-[#F5EFE6] flex items-center justify-center">
+                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200" alt="Logo Doña Julia" class="w-full h-full object-cover" id="current-logo-img">
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold text-[#D4AF37] tracking-wide">La Cocina de Doña Julia</h1>
+                    <p class="text-xs text-amber-200/80">Guaymallén, Mendoza • Comida Casera y Catering</p>
+                </div>
+            </div>
+            
+            <button onclick="toggleAdminPanel()" class="bg-[#8B0000] hover:bg-[#A50000] text-white text-xs md:text-sm font-semibold px-4 py-2 rounded-full shadow-lg transition flex items-center space-x-2 border border-[#D4AF37]/60">
+                <span>🔑 Acceso Dueña</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MODAL DE CONTRASEÑA EXCLUSIVA -->
+    <div id="admin-modal" class="fixed inset-0 bg-black/85 z-50 flex items-center justify-center hidden">
+        <div class="wood-bg border-2 border-[#D4AF37] p-6 rounded-2xl max-w-sm w-full mx-4 shadow-2xl">
+            <h3 class="text-xl font-bold text-[#D4AF37] mb-2">Panel Exclusivo de Doña Julia</h3>
+            <p class="text-xs text-gray-300 mb-4">Ingresá tu contraseña secreta para modificar precios, fotos o el logo (solo vos tenés acceso).</p>
+            <input type="password" id="admin-pass-input" placeholder="Contraseña" class="w-full bg-[#12100E] border border-[#D4AF37]/50 rounded-lg px-4 py-2 text-white mb-4 focus:outline-none focus:border-[#D4AF37]">
+            <div class="flex justify-end space-x-3">
+                <button onclick="toggleAdminPanel()" class="px-4 py-2 text-xs text-gray-400 hover:text-white">Cancelar</button>
+                <button onclick="verifyAdminPassword()" class="bg-[#8B0000] hover:bg-[#A50000] text-white px-5 py-2 rounded-lg text-xs font-bold shadow">Ingresar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BARRA ADMIN ACTIVA -->
+    <div id="admin-controls" class="max-w-6xl mx-auto px-4 mt-4 hidden">
+        <div class="bg-[#2C1A11] border-2 border-[#D4AF37] p-4 rounded-xl flex flex-wrap items-center justify-between gap-4 shadow-lg">
+            <div>
+                <span class="text-[#D4AF37] font-bold text-sm">✨ MODO ADMINISTRADORA ACTIVO</span>
+                <p class="text-xs text-gray-300">Podés editar precios, nombres y subir fotos propias directamente desde las tarjetas.</p>
+            </div>
+            <div class="flex space-x-2">
+                <label class="bg-[#D4AF37] text-black text-xs font-bold px-3 py-1.5 rounded-lg cursor-pointer hover:bg-amber-400">
+                    📷 Cambiar Logo
+                    <input type="file" accept="image/*" class="hidden" onchange="uploadLogo(event)">
+                </label>
+                <button onclick="lockAdmin()" class="bg-gray-800 hover:bg-gray-700 text-xs text-white px-3 py-1.5 rounded-lg">Salir Admin</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PORTADA PRINCIPAL -->
+    <section class="max-w-6xl mx-auto px-4 py-8 text-center">
+        <div class="wood-bg border border-[#D4AF37]/40 rounded-3xl p-6 md:p-10 shadow-2xl relative overflow-hidden">
+            <h2 class="text-3xl md:text-5xl font-extrabold text-[#F9F6F0] mb-3">Sabor Casero que Abraza el Alma</h2>
+            <p class="text-sm md:text-base text-amber-100/80 max-w-2xl mx-auto mb-6">Delivery diario de comidas caseras y servicio integral de catering para casamientos, cumpleaños y eventos en Guaymallén.</p>
+            <div class="flex flex-wrap justify-center gap-3 text-xs">
+                <span class="bg-[#12100E]/80 border border-[#D4AF37]/40 px-4 py-2 rounded-full text-[#D4AF37]">🕒 Martes a Domingo: 10:00 a 14:00 hs y 19:00 a 00:00 hs</span>
+                <span class="bg-[#8B0000]/60 border border-[#8B0000] px-4 py-2 rounded-full text-white">🛵 Envío propio y retiro en local</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- MENÚ DE TEMPORADA -->
+    <main class="max-w-6xl mx-auto px-4">
+        <div class="flex justify-between items-center border-b border-[#D4AF37]/30 pb-2 mb-6">
+            <h3 class="text-2xl font-bold text-[#D4AF37]">Menú de Temporada (Con Guarnición y Ensalada)</h3>
+        </div>
+
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Platos cargados por JS -->
+        </div>
+    </main>
+
+    <!-- CATERING Y EVENTOS -->
+    <section class="max-w-6xl mx-auto px-4 mt-14">
+        <div class="wood-bg border border-[#D4AF37]/40 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+                <h3 class="text-2xl font-bold text-[#D4AF37] mb-2">Servicio de Catering para Eventos</h3>
+                <p class="text-sm text-gray-300 max-w-xl">Casamientos, cumpleaños, reuniones empresariales y mesas festivas. Presupuestos a medida con la calidez de Doña Julia.</p>
+            </div>
+            <button onclick="consultCatering()" class="bg-[#D4AF37] hover:bg-amber-400 text-[#12100E] font-bold px-6 py-3 rounded-full shadow-lg text-sm whitespace-nowrap transition">
+                Consultar Catering por WhatsApp 🥂
+            </button>
+        </div>
+    </section>
+
+    <!-- PERSONAJE ANIMADO: GORDITO, BONITO, CHIQUITO Y GRACIOSITO -->
+    <div id="chefcito" style="left: 20px;" class="fixed bottom-5 z-40 flex flex-col items-center pointer-events-none transition-all duration-[1600ms] ease-in-out">
+        <!-- Globito de diálogo -->
+        <div id="chefcito-bubble" class="bg-[#F9F6F0] text-[#12100E] px-3 py-1.5 rounded-2xl text-xs font-bold shadow-xl border-2 border-[#D4AF37] mb-1 whitespace-nowrap">
+            ¡Hola! 👋 ¿Qué te preparo hoy?
+        </div>
+        
+        <!-- Ilustración SVG del chefcito gordito y graciosito -->
+        <div id="chefcito-body" class="w-24 h-28 drop-shadow-2xl">
+            <svg viewBox="0 0 140 160" class="w-full h-full overflow-visible">
+                <!-- Gorro de chef -->
+                <path d="M45 35 C35 20, 50 5, 70 10 C90 5, 105 20, 95 35 Z" fill="#FFFFFF" stroke="#D4AF37" stroke-width="2"/>
+                <rect x="48" y="30" width="44" height="10" rx="3" fill="#FFFFFF" stroke="#D4AF37" stroke-width="2"/>
+                
+                <!-- Cabecita redonda -->
+                <circle cx="70" cy="56" r="22" fill="#FCD5B5" stroke="#8D5524" stroke-width="2"/>
+                <!-- Cachetitos rosados -->
+                <circle cx="56" cy="60" r="4" fill="#FF8A80" opacity="0.7"/>
+                <circle cx="84" cy="60" r="4" fill="#FF8A80" opacity="0.7"/>
+                <!-- Ojitos felices -->
+                <path d="M58 52 Q62 47 66 52" fill="none" stroke="#3E2723" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M74 52 Q78 47 82 52" fill="none" stroke="#3E2723" stroke-width="2.5" stroke-linecap="round"/>
+                <!-- Sonrisa / Lengüita de antojo -->
+                <path id="chefcito-mouth" d="M62 63 Q70 72 78 63" fill="none" stroke="#3E2723" stroke-width="2.5" stroke-linecap="round"/>
+                <path id="chefcito-tongue" d="M68 67 Q71 75 75 67" fill="#FF5252" class="hidden"/>
+
+                <!-- Pancita redonda y gordita con delantal -->
+                <ellipse cx="70" cy="108" rx="34" ry="32" fill="#FFFFFF" stroke="#D4AF37" stroke-width="2.5"/>
+                <!-- Pañuelo rojo al cuello -->
+                <path d="M54 77 L70 88 L86 77 Z" fill="#8B0000"/>
+                <!-- Botones del traje -->
+                <circle cx="70" cy="96" r="2.5" fill="#8B0000"/>
+                <circle cx="70" cy="108" r="2.5" fill="#8B0000"/>
+
+                <!-- Bracito Izquierdo (Saluda cuando espera) -->
+                <g id="arm-left" class="animate-wave">
+                    <path d="M38 92 Q20 75 26 60" fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round"/>
+                    <circle cx="26" cy="58" r="6" fill="#FCD5B5" stroke="#8D5524" stroke-width="1.5"/>
+                </g>
+
+                <!-- Bracito Derecho (Se soba la pancita al llegar al carrito) -->
+                <g id="arm-right">
+                    <path d="M102 92 Q115 105 90 112" fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round"/>
+                    <circle cx="88" cy="112" r="6.5" fill="#FCD5B5" stroke="#8D5524" stroke-width="1.5"/>
+                </g>
+
+                <!-- Piernitas cortas y zapatitos -->
+                <rect x="52" y="135" width="12" height="14" rx="5" fill="#2C1A11"/>
+                <rect x="76" y="135" width="12" height="14" rx="5" fill="#2C1A11"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- BOTÓN FLOTANTE DEL CARRITO (DERECHA) -->
+    <div id="cart-button-wrapper" class="fixed bottom-6 right-5 z-40">
+        <button onclick="toggleCartModal()" class="bg-[#8B0000] hover:bg-[#A50000] text-white px-5 py-3.5 rounded-full shadow-2xl flex items-center space-x-3 border-2 border-[#D4AF37] transition transform hover:scale-105">
+            <span class="text-xl">🛒</span>
+            <span class="font-bold text-sm"><span id="cart-count">0</span></span>
+            <span class="bg-[#D4AF37] text-[#12100E] px-2.5 py-0.5 rounded-full text-xs font-extrabold" id="cart-total">$0</span>
+        </button>
+    </div>
+
+    <!-- MODAL DEL CARRITO -->
+    <div id="cart-modal" class="fixed inset-0 bg-black/85 z-50 flex items-center justify-center hidden">
+        <div class="wood-bg border-2 border-[#D4AF37] p-6 rounded-3xl max-w-md w-full mx-4 shadow-2xl max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4 border-b border-[#D4AF37]/30 pb-3">
+                <h3 class="text-xl font-bold text-[#D4AF37]">Tu Pedido - Doña Julia</h3>
+                <button onclick="toggleCartModal()" class="text-gray-400 hover:text-white text-lg">✕</button>
+            </div>
+            
+            <div id="cart-items-list" class="overflow-y-auto flex-grow space-y-3 pr-1 mb-4"></div>
+
+            <div class="border-t border-[#D4AF37]/30 pt-3 mb-4">
+                <div class="flex justify-between font-bold text-lg text-[#D4AF37]">
+                    <span>Total:</span>
+                    <span id="cart-modal-total">$0</span>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <button onclick="sendWhatsAppOrder('2617092287')" class="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold py-3 rounded-xl shadow-lg flex items-center justify-center space-x-2 transition text-sm">
+                    <span>Pedir por WhatsApp (Línea 1) 📲</span>
+                </button>
+                <button onclick="sendWhatsAppOrder('2616253232')" class="w-full bg-[#128C7E] hover:bg-[#0e7266] text-white font-bold py-2.5 rounded-xl shadow flex items-center justify-center space-x-2 transition text-xs">
+                    <span>Pedir por WhatsApp (Línea 2) 📲</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let products = JSON.parse(localStorage.getItem('donaJuliaProducts')) || [
+            { id: 1, name: "Escalope de Pollo o Carne", desc: "Tierno y dorado, incluye guarnición a elección y ensalada fresca.", price: 6500, img: "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&q=80&w=600", options: ["Pollo", "Carne"], sides: ["Arroz", "Fideos"] },
+            { id: 2, name: "Milanesa Napolitana", desc: "Con salsa casera, jamón, queso gratinado, guarnición y ensalada.", price: 7200, img: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&q=80&w=600", options: [], sides: ["Arroz", "Fideos"] },
+            { id: 3, name: "Pastel de Papas", desc: "Puré cremoso gratinado con relleno jugoso tradicional al horno.", price: 6400, img: "https://images.unsplash.com/photo-1585238342024-78d387f4a707?auto=format&fit=crop&q=80&w=600", options: [], sides: [] },
+            { id: 4, name: "Fideos con Boloñesa", desc: "Pasta con salsa tradicional de cocción lenta y carne.", price: 5800, img: "https://images.unsplash.com/photo-1621996346565-e3d5d6281298?auto=format&fit=crop&q=80&w=600", options: [], sides: [] },
+            { id: 5, name: "Arroz con Pollo", desc: "Receta clásica, abundante y llena de sabor casero.", price: 6000, img: "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&q=80&w=600", options: [], sides: [] },
+            { id: 6, name: "Costeletas", desc: "Jugosas costeletas con guarnición y ensalada fresca.", price: 6900, img: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=600", options: [], sides: ["Arroz", "Fideos"] },
+            { id: 7, name: "Tarta de Acelga con Pollo", desc: "Masa casera crocante y relleno abundante.", price: 5500, img: "https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?auto=format&fit=crop&q=80&w=600", options: [], sides: [] },
+            { id: 8, name: "Sopa de Maní", desc: "Reconfortante y cremosa, ideal para disfrutar calentita.", price: 4800, img: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&q=80&w=600", options: [], sides: [] },
+            { id: 9, name: "Zapallitos Rellenos", desc: "Horneados con relleno casero y gratinados.", price: 5600, img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&q=80&w=600", options: [], sides: [] }
+        ];
+
+        const savedLogo = localStorage.getItem('donaJuliaLogo');
+        if (savedLogo) document.getElementById('current-logo-img').src = savedLogo;
+
+        let cart = [];
+        let isAdmin = false;
+        let isAnimatingChefcito = false;
+
+        function saveProducts() {
+            localStorage.setItem('donaJuliaProducts', JSON.stringify(products));
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+            products.forEach(p => {
+                let optionsHtml = '';
+                if (p.options.length > 0) {
+                    optionsHtml += `<div class="mb-2"><label class="text-xs text-amber-200/70">Variedad:</label><select id="opt-${p.id}" class="w-full bg-[#12100E] border border-[#D4AF37]/40 rounded text-xs p-1.5 text-white">${p.options.map(o=>`<option value="${o}">${o}</option>`).join('')}</select></div>`;
+                }
+                if (p.sides.length > 0) {
+                    optionsHtml += `<div class="mb-3"><label class="text-xs text-amber-200/70">Guarnición:</label><select id="side-${p.id}" class="w-full bg-[#12100E] border border-[#D4AF37]/40 rounded text-xs p-1.5 text-white">${p.sides.map(s=>`<option value="${s}">${s}</option>`).join('')}</select></div>`;
+                }
+
+                let adminButtons = isAdmin ? `
+                    <div class="mt-3 pt-3 border-t border-[#D4AF37]/30 flex flex-wrap gap-1.5 justify-between">
+                        <button onclick="editName(${p.id})" class="bg-amber-600 text-white text-[11px] px-2 py-1 rounded font-semibold">Nombre</button>
+                        <button onclick="editPrice(${p.id})" class="bg-[#D4AF37] text-black text-[11px] px-2 py-1 rounded font-bold">Precio</button>
+                        <label class="bg-gray-700 text-white text-[11px] px-2 py-1 rounded font-semibold cursor-pointer">
+                            Foto <input type="file" accept="image/*" class="hidden" onchange="uploadProductImg(event, ${p.id})">
+                        </label>
+                    </div>
+                ` : '';
+
+                grid.innerHTML += `
+                    <div class="wood-bg border border-[#D4AF37]/30 rounded-2xl overflow-hidden shadow-xl flex flex-col justify-between p-4">
+                        <div>
+                            <div class="h-44 rounded-xl overflow-hidden mb-3 relative border border-[#D4AF37]/20">
+                                <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover">
+                                <span class="absolute top-2 right-2 bg-[#8B0000] border border-[#D4AF37] text-white text-xs font-bold px-3 py-1 rounded-full shadow">$${p.price.toLocaleString()}</span>
+                            </div>
+                            <h4 class="font-bold text-base text-[#F9F6F0] mb-1">${p.name}</h4>
+                            <p class="text-xs text-gray-300 mb-3">${p.desc}</p>
+                            ${optionsHtml}
+                        </div>
+                        <div>
+                            <button onclick="addToCart(${p.id})" class="w-full bg-[#8B0000] hover:bg-[#A50000] border border-[#D4AF37]/50 text-white font-bold py-2.5 rounded-xl text-sm shadow transition flex items-center justify-center space-x-2">
+                                <span>Agregar al Carrito 🛒</span>
+                            </button>
+                            ${adminButtons}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function toggleAdminPanel() {
+            if (isAdmin) {
+                document.getElementById('admin-controls').classList.toggle('hidden');
+                return;
+            }
+            document.getElementById('admin-modal').classList.toggle('hidden');
+        }
+
+        function verifyAdminPassword() {
+            const pass = document.getElementById('admin-pass-input').value;
+            if (pass === 'julian2026') {
+                isAdmin = true;
+                document.getElementById('admin-modal').classList.add('hidden');
+                document.getElementById('admin-controls').classList.remove('hidden');
+                document.getElementById('admin-pass-input').value = '';
+                renderProducts();
+            } else {
+                alert('Contraseña incorrecta.');
+            }
+        }
+
+        function lockAdmin() {
+            isAdmin = false;
+            document.getElementById('admin-controls').classList.add('hidden');
+            renderProducts();
+        }
+
+        function editPrice(id) {
+            const p = products.find(item => item.id === id);
+            const val = prompt(`Nuevo precio para ${p.name}:`, p.price);
+            if (val && !isNaN(val)) {
+                p.price = Number(val);
+                saveProducts();
+                renderProducts();
+            }
+        }
+
+        function editName(id) {
+            const p = products.find(item => item.id === id);
+            const val = prompt(`Nuevo nombre para ${p.name}:`, p.name);
+            if (val) {
+                p.name = val;
+                saveProducts();
+                renderProducts();
+            }
+        }
+
+        function uploadProductImg(event, id) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const p = products.find(item => item.id === id);
+                p.img = e.target.result;
+                saveProducts();
+                renderProducts();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function uploadLogo(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('current-logo-img').src = e.target.result;
+                localStorage.setItem('donaJuliaLogo', e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function addToCart(id) {
+            const p = products.find(item => item.id === id);
+            const optEl = document.getElementById(`opt-${id}`);
+            const sideEl = document.getElementById(`side-${id}`);
+            cart.push({
+                ...p,
+                selectedOpt: optEl ? optEl.value : '',
+                selectedSide: sideEl ? sideEl.value : ''
+            });
+            updateCartUI();
+            runChefcitoToCart();
+        }
+
+        // ANIMACIÓN DEL PERSONAJE GORDITO CORRIENDO AL CARRITO Y SOBÁNDOSE LA PANZA
+        function runChefcitoToCart() {
+            if (isAnimatingChefcito) return;
+            isAnimatingChefcito = true;
+
+            const chefcito = document.getElementById('chefcito');
+            const body = document.getElementById('chefcito-body');
+            const bubble = document.getElementById('chefcito-bubble');
+            const armLeft = document.getElementById('arm-left');
+            const armRight = document.getElementById('arm-right');
+            const tongue = document.getElementById('chefcito-tongue');
+
+            // 1. Deja de saludar y empieza a caminar hacia el carrito
+            armLeft.classList.remove('animate-wave');
+            body.classList.add('animate-waddle');
+            bubble.innerText = "¡Mmm! ¡Qué rico, voy para allá! 🏃‍♂️";
+
+            // Calcula distancia hasta quedar justo al lado izquierdo del carrito
+            const targetX = Math.max(window.innerWidth - 255, 60);
+            chefcito.style.left = `${targetX}px`;
+
+            // 2. Llega al carrito: frena, saca lengüita de antojo y se soba la pancita
+            setTimeout(() => {
+                body.classList.remove('animate-waddle');
+                armRight.classList.add('animate-rub');
+                tongue.classList.remove('hidden');
+                bubble.innerText = "¡Mmm qué delicia! 😋❤️";
+            }, 1600);
+
+            // 3. Regresa feliz a su lugar a seguir saludando
+            setTimeout(() => {
+                armRight.classList.remove('animate-rub');
+                tongue.classList.add('hidden');
+                body.classList.add('animate-waddle');
+                bubble.innerText = "¡Listo en tu carrito! 🛒";
+                chefcito.style.left = '20px';
+            }, 3800);
+
+            setTimeout(() => {
+                body.classList.remove('animate-waddle');
+                armLeft.classList.add('animate-wave');
+                bubble.innerText = "¡Hola! 👋 ¿Agregamos algo más?";
+                isAnimatingChefcito = false;
+            }, 5400);
+        }
+
+        function updateCartUI() {
+            document.getElementById('cart-count').innerText = cart.length;
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            document.getElementById('cart-total').innerText = `$${total.toLocaleString()}`;
+            document.getElementById('cart-modal-total').innerText = `$${total.toLocaleString()}`;
+
+            const list = document.getElementById('cart-items-list');
+            list.innerHTML = '';
+            if (cart.length === 0) {
+                list.innerHTML = `<p class="text-gray-400 text-center text-sm py-4">Tu carrito está vacío.</p>`;
+                return;
+            }
+            cart.forEach((item, idx) => {
+                list.innerHTML += `
+                    <div class="bg-[#12100E] border border-[#D4AF37]/30 p-3 rounded-xl flex justify-between items-center text-xs">
+                        <div>
+                            <span class="font-bold text-white">${item.name}</span>
+                            <p class="text-gray-400">${item.selectedOpt ? item.selectedOpt + ' • ' : ''}${item.selectedSide || ''}</p>
+                            <span class="text-[#D4AF37] font-bold">$${item.price.toLocaleString()}</span>
+                        </div>
+                        <button onclick="removeFromCart(${idx})" class="text-red-400 hover:text-red-300 font-bold px-2">✕</button>
+                    </div>
+                `;
+            });
+        }
+
+        function removeFromCart(idx) {
+            cart.splice(idx, 1);
+            updateCartUI();
+        }
+
+        function toggleCartModal() {
+            document.getElementById('cart-modal').classList.toggle('hidden');
+        }
+
+        function sendWhatsAppOrder(phone) {
+            if (cart.length === 0) return alert('Tu carrito está vacío.');
+            let text = "Hola *La Cocina de Doña Julia*! Quiero hacer el siguiente pedido:%0A%0A";
+            let total = 0;
+            cart.forEach((item, i) => {
+                text += `${i+1}. *${item.name}*`;
+                if (item.selectedOpt || item.selectedSide) text += ` (${[item.selectedOpt, item.selectedSide].filter(Boolean).join(' - ')})`;
+                text += ` - $${item.price.toLocaleString()}%0A`;
+                total += item.price;
+            });
+            text += `%0A*Total estimado: $${total.toLocaleString()}*`;
+            window.open(`https://wa.me/549${phone}?text=${text}`, '_blank');
+        }
+
+        function consultCatering() {
+            const text = "Hola *La Cocina de Doña Julia*! Quisiera consultar presupuesto por el servicio de *Catering para Eventos*.";
+            window.open(`https://wa.me/5492617092287?text=${text}`, '_blank');
+        }
+
+        renderProducts();
+    </script>
+</body>
+</html>
